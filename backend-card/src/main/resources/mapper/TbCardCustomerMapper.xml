@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardCustomerMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardCustomer">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="star_card_id" jdbcType="VARCHAR" property="starCardId" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="discount_id" jdbcType="BIGINT" property="discountId" />
+    <result column="charge_setting_id" jdbcType="VARCHAR" property="chargeSettingId" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="card_state" jdbcType="INTEGER" property="cardState" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="created_id" jdbcType="VARCHAR" property="createdId" />
+    <result column="update_id" jdbcType="VARCHAR" property="updateId" />
+  </resultMap>
+
+    <select id="selectByPageNumSize" resultType="TbCardCustomer">
+        SELECT
+            c.account_id,
+            c.card_id,
+            c.company_id,
+            c.created_at,
+            c.created_id,
+            c.customer_name,
+            c.discount_id,
+            c.id_card,
+            c.id,
+            c.telephone,
+            c.type,
+            a.remain AS remain,
+            DATE_FORMAT(f.pay_time,'%Y-%m-%d %H:%i:%s') as updatedAt
+        FROM
+            tb_card_customer c
+        INNER JOIN tb_account a ON c.account_id = a.id
+        LEFT JOIN tb_card_recharge_log d ON c.id=d.card_customer_id
+        LEFT JOIN tb_order_payment_item f ON f.result_data = d.charge_order_id
+        <where>
+            c.delete_flag = 0
+            and c.card_state = 1
+            <if test="tbCardCustomer.createdAt != null or tbCardCustomer.createdAt != ''">
+                and DATE_FORMAT(c.created_at,'%Y-%m-%d') &gt;= #{tbCardCustomer.createdAt}
+            </if>
+            <if test="tbCardCustomer.updatedAt != null or tbCardCustomer.updatedAt != ''">
+                and DATE_FORMAT(c.created_at,'%Y-%m-%d') &lt;= #{tbCardCustomer.updatedAt}
+            </if>
+            <if test="tbCardCustomer.telephone != null">
+                and c.telephone like CONCAT('%',#{tbCardCustomer.telephone},'%')
+            </if>
+            <if test="tbCardCustomer.type != null">
+                and c.type = #{tbCardCustomer.type}
+            </if>
+        </where>
+        GROUP BY c.account_id
+        order by c.created_at desc
+    </select>
+
+    <insert id="insert" parameterType="com.resto.msgc.backend.card.entity.TbCardCustomer">
+    INSERT INTO tb_card_customer(card_id,customer_name,telephone,account_id,type,created_at,updated_at,discount_id,company_id,card_state,id_card,created_id,update_id)
+    VALUES (#{cardId},#{customerName},#{telephone},#{accountId},#{type},#{createdAt},#{updatedAt},#{discountId},#{companyId},#{cardState},#{idCard},#{createdId},#{updateId})
+  </insert>
+
+    <select id="findByCardId" resultType="TbCardCustomer">
+    SELECT * FROM tb_card_customer WHERE delete_flag = 0 AND card_id = #{cardId}
+  </select>
+
+  <select id="searchSelectCount" resultType="int">
+      SELECT COUNT(0) FROM (SELECT
+      count(f.pay_time)
+      FROM
+      tb_card_customer c
+      INNER JOIN tb_account a ON c.account_id = a.id
+      LEFT JOIN tb_card_recharge_log d ON c.id=d.card_customer_id
+      LEFT JOIN tb_order_payment_item f ON f.result_data = d.charge_order_id
+      <where>
+          c.delete_flag = 0
+          and c.card_state = 1
+          <if test="tbCardCustomer.createdAt != null or tbCardCustomer.createdAt != ''">
+              and DATE_FORMAT(c.created_at,'%Y-%m-%d') &gt;= #{tbCardCustomer.createdAt}
+          </if>
+          <if test="tbCardCustomer.updatedAt != null or tbCardCustomer.updatedAt != ''">
+              and DATE_FORMAT(c.created_at,'%Y-%m-%d') &lt;= #{tbCardCustomer.updatedAt}
+          </if>
+          <if test="tbCardCustomer.telephone != null">
+              and c.telephone like CONCAT('%',#{tbCardCustomer.telephone},'%')
+          </if>
+          <if test="tbCardCustomer.type != null">
+              and c.type = #{tbCardCustomer.type}
+          </if>
+      </where>
+      GROUP BY c.account_id) q
+  </select>
+
+    <select id="findCardInfoByCardId" resultType="com.resto.msgc.backend.card.dto.CardDto">
+        SELECT
+            a.id AS cardCustomerId,
+            a.card_id AS cardId,
+            a.id_card AS idCard,
+            a.telephone AS telephone,
+            a.customer_name AS customerName,
+            a.type AS cardType,
+            b.remain AS remain,
+            c.discount_name AS discountName,
+            d.id AS companyId,
+            d.company_name AS companyName
+        FROM
+            tb_card_customer a
+        INNER JOIN tb_account b ON a.account_id = b.id
+        LEFT JOIN tb_card_discount c ON a.discount_id = c.id
+        LEFT JOIN tb_card_company d ON a.company_id = d.id
+        WHERE
+            a.delete_flag = 0
+--         AND a.card_state=1
+        AND b.status = 1
+        AND a.card_id = #{cardId} OR a.telephone = #{cardId}
+    </select>
+
+    <select id="activatedCardInfo" resultType="com.resto.msgc.backend.card.dto.ActivatedDto">
+         SELECT
+            a.id AS cardCustomer_id,
+            a.star_card_id card_id,
+            a.id_card,
+            a.telephone,
+            a.customer_name,
+            a.type,
+            b.remain,
+            c.discount_name,
+            d.id AS company_id,
+            d.company_name,
+            o.charge_money,
+            o.reward_money
+         FROM
+            tb_card_customer a
+         INNER JOIN tb_account b ON a.account_id = b.id
+         LEFT JOIN tb_card_discount c ON a.discount_id = c.id
+         LEFT JOIN tb_card_company d ON a.company_id = d.id
+         LEFT JOIN tb_card_rechange o on o.card_customer_id=a.id
+         WHERE a.delete_flag = 0
+         AND a.card_state=2
+         AND b.status = 1
+         AND o.pay_type=5
+         AND a.star_card_id = #{cardId}
+    </select>
+
+    <update id="updateByCardPP" parameterType="com.resto.msgc.backend.card.entity.TbCardCustomer" >
+        update tb_card_customer
+        set
+        type = #{type,jdbcType=BIT},
+        id_card = #{idCard,jdbcType=VARCHAR},
+        discount_id = #{discountId,jdbcType=BIGINT},
+        company_id = #{companyId,jdbcType=BIGINT},
+        updated_at = #{updatedAt,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectBrandRechargeDateByBeginAndEnd" resultType="com.alibaba.fastjson.JSONObject">
+        select
+        (select count(1) from tb_card_rechange where cost!=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate} ) as 'cardCount',
+        (select count(1) from tb_card_rechange where cost!=0 and card_type =1 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}) as 'workerCardCount',
+        (select count(1) from tb_card_rechange where cost!=0 and card_type =0 and date_format(created_at,'%Y-%m-%d')  BETWEEN #{beginDate} and #{endDate}) as 'normalCardCount',
+        (select count(1) from tb_card_rechange where cost!=0 and card_type =2 and date_format(created_at,'%Y-%m-%d')  BETWEEN #{beginDate} and #{endDate}) as 'tempCardCount',
+        (select count(1)*10 from tb_card_rechange where pay_type=4 and cost!=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}) as 'chequeCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=3 and cost!=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'cashCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=1 and cost!=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'wechatCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=2 and cost!=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'aliPayCardMoney',
+         (select count(1)*10 from tb_card_rechange where pay_type=5 and cost!=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'starCardMoney'
+     </select>
+
+    <select id="selectNormalRechargeByBeginAndEnd" resultType="com.alibaba.fastjson.JSONObject">
+   select
+    (select count(1) from tb_card_rechange where cost!=0 and card_type =0
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+       ) as 'cardCount',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=4 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'chequeCardMoney',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=3 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+       ) as 'cashCardMoney',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=1 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'wechatCardMoney',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=2 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'aliPayCardMoney',
+         (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=5 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        ) as 'starCardMoney'
+   </select>
+
+    <!--临时卡开卡数量起始-->
+    <select id="selectTemporaryCardByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.StartAndEndDto">
+        SELECT COUNT(r.id) cardCount,
+                   COUNT(CASE WHEN r.pay_type=4 THEN r.id ELSE null END)*10 chequeCardMoney,
+                   COUNT(CASE WHEN r.pay_type=3 THEN r.id ELSE null END)*10 cashCardMoney,
+                   COUNT(CASE WHEN r.pay_type=1 THEN r.id ELSE null END)*10 wechatCardMoney,
+                   COUNT(CASE WHEN r.pay_type=2 THEN r.id ELSE null END)*10 aliPayCardMoney,
+                   COUNT(CASE WHEN r.pay_type=5 THEN r.id ELSE null END)*10 starCardMoney
+              FROM tb_card_rechange r
+             WHERE r.cost!=0
+               AND r.card_type =2
+               AND UNIX_TIMESTAMP(date_format(r.created_at,'%Y-%m-%d')) BETWEEN UNIX_TIMESTAMP(#{beginDate}) AND UNIX_TIMESTAMP(#{endDate})
+    </select>
+
+
+    <!--查询所有的公司的开卡数量-->
+    <select id="selectCompanyCardCount" resultType="com.alibaba.fastjson.JSONObject">
+ select
+        tcc.company_name as 'companyName',
+        count(1) as 'cardCount',
+        tcc.id as 'id'
+        from tb_card_rechange tcr right JOIN tb_card_company tcc on tcr.company_id=tcc.id where
+            date_format(tcr.created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate} and
+        tcr.card_type =1 and tcr.cost!=0 GROUP BY tcc.company_name
+            </select>
+
+    <!--查询某个公司的员工卡开卡金额-->
+    <select id="selectCompanyCardMoney" resultType="java.lang.Long">
+      <!--  select count(DISTINCT(card_customer_id))*10 as 'count' from tb_card_rechange where
+        <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+            date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate} and
+        </if>
+        company_id=#{id} and pay_type=#{payType}-->
+        select count(1)*10 as 'count' from tb_card_rechange where cost!=0 and
+
+        date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate} and
+
+        company_id=#{id} and pay_type=#{payType}
+    </select>
+
+
+    <select id="selectBrandRechargeDateByMoth" resultType="com.alibaba.fastjson.JSONObject">
+        select
+        (select count(1) from tb_card_rechange where cost!=0 and date_format(created_at,'%Y-%m') = #{mothDate} ) as 'cardCount',
+        (select count(1) from tb_card_rechange where cost!=0 and card_type =1 and date_format(created_at,'%Y-%m') = #{mothDate}) as 'workerCardCount',
+        (select count(1) from tb_card_rechange where cost!=0 and card_type =0 and date_format(created_at,'%Y-%m')  = #{mothDate}) as 'normalCardCount',
+        (select count(1) from tb_card_rechange where cost!=0 and card_type =2 and date_format(created_at,'%Y-%m') = #{mothDate}) as 'tempCardCount',
+        (select count(1)*10 from tb_card_rechange where pay_type=4 and cost!=0 and date_format(created_at,'%Y-%m') = #{mothDate}) as 'chequeCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=3 and cost!=0 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'cashCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=1 and cost!=0 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'wechatCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=2 and cost!=0 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'aliPayCardMoney',
+        (select count(1)*10 from tb_card_rechange where pay_type=5 and cost!=0 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'starCardMoney'
+    </select>
+
+    <select id="selectNormalRechargeByMoth" resultType="com.alibaba.fastjson.JSONObject">
+      select
+    (select count(1) from tb_card_rechange where cost!=0 and card_type =0
+    and date_format(created_at,'%Y-%m') = #{mothDate}
+       ) as 'cardCount',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=4 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'chequeCardMoney',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=3 and date_format(created_at,'%Y-%m') = #{mothDate}
+       ) as 'cashCardMoney',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=1 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'wechatCardMoney',
+    (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=2 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'aliPayCardMoney',
+        (select count(1)*10 from tb_card_rechange where cost!=0 and card_type =0
+        and pay_type=5 and date_format(created_at,'%Y-%m') = #{mothDate}
+        ) as 'starCardMoney'
+    </select>
+
+    <!--查询所有的公司的开卡数量按月-->
+    <select id="selectCompanyCardCountMoth" resultType="com.alibaba.fastjson.JSONObject">
+     select
+        tcc.company_name as 'companyName',
+        count(1) as 'cardCount',
+        tcc.id as 'id'
+        from tb_card_rechange tcr right JOIN tb_card_company tcc on tcr.company_id=tcc.id where
+            date_format(tcr.created_at,'%Y-%m-%d') = #{mothDate} and
+        tcr.card_type =1 and tcr.cost!=0 GROUP BY tcc.company_name
+    </select>
+
+    <!--查询某个公司的开卡金额-->
+    <select id="selectCompanyCardMoneyMoth" resultType="java.lang.Long">
+        select count(1)*10 as 'count' from tb_card_rechange where cost!=0 and
+        date_format(created_at,'%Y-%m-%d') = #{mothDate} and
+        company_id=#{id} and pay_type=#{payType}
+    </select>
+
+
+    <!--查询所有的公司-->
+    <select id="selectAllCompany" resultType="com.resto.msgc.backend.card.entity.TbCardCompany">
+        select id,company_name from tb_card_company;
+    </select>
+
+    <select id="selectOneCompanyAll" resultType="com.resto.msgc.backend.card.dto.BrandOneCompanyAllDto" >
+         SELECT
+        trcr.date as 'date',
+        trcr.time as 'time',
+        tccc.company_name as 'companyName',
+        trcr.customerName as 'customerName',
+        trcr.tel as 'tel',
+        trcr.idCard as 'idCard',
+        trcr.cardPayType as 'cardPayType',
+        trcr.cardPayMoney as 'cardPayMoney'
+         from
+        (select DATE_FORMAT(tcr.created_at,'%Y-%m-%d') as 'date',
+        DATE_FORMAT(tcr.created_at,'%H:%i:%s') as 'time',
+        tcr.company_id as 'companyId',
+        tcc.customer_name as 'customerName',
+        tcc.telephone as 'tel',
+        tcc.id_card as 'idCard',
+        case
+        tcr.pay_type
+        when 1 then '微信'
+        when 2 then '支付宝'
+        when 3 then '现金'
+        when 4 then '支票'
+        else '未知'
+        end
+        as 'cardPayType',
+        tcr.cost as 'cardPayMoney'
+        from tb_card_rechange tcr RIGHT JOIN tb_card_customer tcc on tcr.card_customer_id=tcc.id
+        where date_format(tcr.created_at,'%Y-%m')=#{mothDate} and tcr.company_id=#{companyId} and tcr.cost!=0 order by tcr.created_at asc) trcr LEFT JOIN tb_card_company tccc on trcr.companyId=tccc.id
+    </select>
+
+    <select id="selectOneCompanyNormalAll" resultType="com.resto.msgc.backend.card.dto.BrandOneCompanyAllDto" >
+       select DATE_FORMAT(tcr.created_at,'%Y-%m-%d') as 'date',
+        DATE_FORMAT(tcr.created_at,'%H:%i:%s') as 'time',
+        tcc.customer_name as 'customerName',
+        tcc.telephone as 'tel',
+        tcc.id_card as 'idCard',
+        case
+        tcr.pay_type
+        when 1 then '微信'
+        when 2 then '支付宝'
+        when 3 then '现金'
+        when 4 then '支票'
+        else '未知'
+        end
+        as 'cardPayType',
+        IFNULL(tcr.cost,0) as 'cardPayMoney'
+        from tb_card_rechange tcr RIGHT JOIN tb_card_customer tcc on tcr.card_customer_id=tcc.id
+        where date_format(tcr.created_at,'%Y-%m')=#{mothDate} and tcr.card_type=1 and tcr.cost!=0 order by tcr.created_at asc
+    </select>
+
+
+    <!--通过卡号找找用户-->
+    <select id="selectByCardId" resultType="com.resto.msgc.backend.card.entity.TbCardCustomer">
+        select * from tb_card_customer where card_id=#{cardId} and delete_flag=0 and card_state=1
+    </select>
+
+    <!--通过账户id查找-->
+    <select id="selectByAccountId" resultType="com.resto.msgc.backend.card.entity.TbCardCustomer">
+        select * from tb_card_customer where account_id=#{accountId} and delete_flag=0 and card_state=1
+    </select>
+</mapper>

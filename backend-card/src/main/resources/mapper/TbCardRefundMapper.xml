@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardRefundMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardRefund">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="card_customer_id" jdbcType="BIGINT" property="cardCustomerId" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="wechat_money" jdbcType="DECIMAL" property="wechatMoney" />
+    <result column="ali_money" jdbcType="DECIMAL" property="aliMoney" />
+    <result column="cash_money" jdbcType="DECIMAL" property="cashMoney" />
+    <result column="cheque_money" jdbcType="DECIMAL" property="chequeMoney" />
+    <result column="star_money" jdbcType="DECIMAL" property="starMoney" />
+    <result column="card_type" jdbcType="TINYINT" property="cardType" />
+    <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" typeHandler="com.resto.conf.mybatis.handle.ValuedEnumTypeHandler" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+  </resultMap>
+
+
+  <select id="selectEntityCardRefundByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+      select
+      count(1)  as 'pinCardCount',
+      IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+      IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+      IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+      IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+      IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+      IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+      from tb_card_refund tcr INNER JOIN tb_card_customer_log tccl on tcr.card_customer_id=tccl.card_customer_id
+      <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+          WHERE date_format(tccl.created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+      </if>
+      ORDER BY tcr.created_at asc
+  </select>
+
+  <select id="selectNormalCardRefundByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+    select
+    count(1)  as 'pinCardCount',
+    IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+    IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+    IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+    IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+    IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+      IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+    from tb_card_refund tcr INNER JOIN tb_card_customer_log tccl on tcr.card_customer_id=tccl.card_customer_id where tccl.card_type=0
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+        and date_format(tccl.created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ORDER BY tcr.created_at asc
+</select>
+
+    <select id="selectTemporaryCardRefundByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+        select
+        count(1)  as 'pinCardCount',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+        IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+        IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+        IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+        IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+        from tb_card_refund tcr INNER JOIN tb_card_customer_log tccl on tcr.card_customer_id=tccl.card_customer_id where tccl.card_type=2
+        <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+            and date_format(tccl.created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+        </if>
+        ORDER BY tcr.created_at asc
+    </select>
+
+  <select id="selectWorkerCardRefundByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+    select
+    tcc.company_name as 'companyName',
+    count(1) as 'pinCardCount',
+    IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+    IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+    IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+    IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+    IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+      IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+    from tb_card_refund tcr LEFT JOIN tb_card_company tcc on tcr.company_id=tcc.id
+    where tcr.card_type=1
+    and date_format(tcr.created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    GROUP BY tcc.id
+    ORDER BY tcr.created_at asc
+  </select>
+
+    <!--moth-->
+    <select id="selectEntityCardRefundByMoth" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+        select
+        count(1)  as 'pinCardCount',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+        IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+        IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+        IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+        IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+        from tb_card_refund tcr INNER JOIN tb_card_customer_log tccl on tcr.card_customer_id=tccl.card_customer_id
+        <if test="mothDate!=null and !mothDate.equals('')">
+            WHERE date_format(tccl.created_at,'%Y-%m') = #{mothDate}
+        </if>
+        ORDER BY tcr.created_at asc
+    </select>
+
+    <select id="selectNormalCardRefundByMoth" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+        select
+        count(1)  as 'pinCardCount',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+        IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+        IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+        IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+        IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+        from tb_card_refund tcr INNER JOIN tb_card_customer_log tccl on tcr.card_customer_id=tccl.card_customer_id where tccl.card_type=0
+            and date_format(tccl.created_at,'%Y-%m') = #{mothDate}
+        ORDER BY tcr.created_at asc
+    </select>
+
+    <select id="selectWorkerCardRefundByMoth" resultType="com.resto.msgc.backend.card.dto.BrandEntityPinCardDataDto">
+        select
+        tcc.company_name as 'companyName',
+        count(1) as 'pinCardCount',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.cheque_money,0)+IFNULL(tcr.star_money,0)),0) as 'count',
+        IFNULL(sum(IFNULL(tcr.cash_money,0)),0) as 'cashMoney',
+        IFNULL(sum(IFNULL(tcr.cheque_money,0)),0) as 'chequeMoney',
+        IFNULL(sum(IFNULL(tcr.wechat_money,0)),0) as 'wechatMoney',
+        IFNULL(sum(IFNULL(tcr.ali_money,0)),0) as 'aliMoney',
+        IFNULL(sum(IFNULL(tcr.star_money,0)),0) as 'starMoney'
+        from tb_card_refund tcr LEFT JOIN tb_card_company tcc on tcr.company_id=tcc.id
+        where tcr.card_type=1
+        and date_format(tcr.created_at,'%Y-%m') = #{mothDate}
+        GROUP BY tcc.id
+        ORDER BY tcr.created_at asc
+    </select>
+
+    <!--all-->
+<select id="selectRefundCardWorkerAllDto" resultType="com.resto.msgc.backend.card.dto.BrandRefundCardWorkerAllDto">
+            select
+        tcrccl.created_at as 'created',
+        tcrccl.date as 'date',
+        tcrccl.time as 'time',
+        tcc.company_name as 'companyName',
+        tcrccl.customerName as 'customerName',
+        tcrccl.tel as 'tel',
+        tcrccl.idCard as 'idCard',
+        tcrccl.chequeMoney as 'chequeMoney',
+        tcrccl.cashMoney as 'cashMoney',
+        tcrccl.wechatMoney as 'wechatMoney',
+        tcrccl.aliMoney as 'aliMoney',
+        tcrccl.starMoney as 'starMoney',
+        tcrccl.count as 'count'
+        from
+        (select
+        tccl.created_at,
+        tcr.company_id as 'companyId',
+        DATE_FORMAT(tcr.created_at,'%Y-%m-%d') as 'date',
+        DATE_FORMAT(tcr.created_at,'%H:%i:%s') as 'time',
+        tccl.customer_name as 'customerName',
+        tccl.telephone as 'tel',
+        tccl.id_card as 'idCard',
+        IFNULL(tcr.cheque_money,0) as 'chequeMoney',
+        IFNULL(tcr.cash_money,0) as 'cashMoney',
+        IFNULL(tcr.wechat_money,0) as 'wechatMoney',
+        IFNULL(tcr.ali_money,0) as 'aliMoney',
+        IFNULL(tcr.star_money,0) as 'starMoney',
+        IFNULL(tcr.cheque_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.star_money,0) as 'count'
+        from
+        tb_card_refund tcr inner JOIN tb_card_customer_log tccl
+        on tcr.card_customer_id=tccl.card_customer_id where tcr.company_id=#{companyId} and date_format(tcr.created_at,'%Y-%m')=#{mothDate}) tcrccl LEFT JOIN tb_card_company tcc
+        on tcrccl.companyId=tcc.id
+</select>
+
+    <select id="selectRefundCardNormalAllDto" resultType="com.resto.msgc.backend.card.dto.BrandRefundCardWorkerAllDto">
+         select
+                tccl.created_at,
+                DATE_FORMAT(tcr.created_at,'%Y-%m-%d') as 'date',
+                DATE_FORMAT(tcr.created_at,'%H:%i:%s') as 'time',
+                tccl.customer_name as 'customerName',
+                tccl.telephone as 'tel',
+                tccl.id_card as 'idCard',
+                IFNULL(tcr.cheque_money,0) as 'chequeMoney',
+                IFNULL(tcr.cash_money,0) as 'cashMoney',
+                IFNULL(tcr.wechat_money,0) as 'wechatMoney',
+                IFNULL(tcr.ali_money,0) as 'aliMoney',
+                 IFNULL(tcr.star_money,0) as 'starMoney'
+                IFNULL(tcr.cheque_money,0)+IFNULL(tcr.cash_money,0)+IFNULL(tcr.wechat_money,0)+IFNULL(tcr.ali_money,0)+IFNULL(tcr.star_money,0) as 'count'
+                from
+                tb_card_refund tcr LEFT JOIN tb_card_customer_log tccl
+                on tcr.card_customer_id=tccl.card_customer_id where date_format(tcr.created_at,'%Y-%m')=#{mothDate} and tcr.card_type=0
+            </select>
+
+</mapper>

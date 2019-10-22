@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbAccountMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbAccount">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="remain" jdbcType="DECIMAL" property="remain" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="frozen_remain" jdbcType="DECIMAL" property="frozenRemain" />
+  </resultMap>
+
+  <insert id="insert" parameterType="com.resto.msgc.backend.card.entity.TbAccount">
+    INSERT INTO tb_account(id,remain,status,frozen_remain)
+    VALUES (#{id},#{remain},#{status},#{frozenRemain})
+  </insert>
+
+  <select id="selectById" resultType="com.resto.msgc.backend.card.entity.TbAccount">
+    SELECT * from tb_account where id=#{id}
+  </select>
+
+  <!--更新账户余额-->
+  <update id="updateRemain">
+    update tb_account set remain=remain-#{payMoney} where id=#{id}
+  </update>
+
+  <!--退款更新账户余额-->
+  <update id="updateRemainForRefund">
+    update tb_account set remain=remain+#{refundMoney} where id=#{id}
+  </update>
+
+
+</mapper>

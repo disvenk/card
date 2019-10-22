@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardLoginUserMapper">
+    <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardLoginUser">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="brand_id" jdbcType="VARCHAR" property="brandId"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="flag" jdbcType="INTEGER" property="flag"/>
+        <result column="created_at" jdbcType="VARCHAR" property="createdAt"/>
+        <result column="updated_at" jdbcType="VARCHAR" property="updatedAt"/>
+        <result column="login_first" jdbcType="TIMESTAMP" property="loginFirst"/>
+    </resultMap>
+
+    <select id="findUserByTelephone" resultType="TbCardLoginUser">
+    SELECT
+       *
+    FROM
+        `tb_card_login_user`
+    WHERE
+        telephone = #{telephone}
+  </select>
+
+    <select id="findUserByBrandId" resultType="TbCardLoginUser">
+    SELECT
+        telephone
+    FROM
+        `tb_card_login_user`
+    WHERE
+        brand_id= #{brandId}
+    </select>
+
+
+    <!--new login-->
+    <select id="selectUserByFlag" resultType="TbCardLoginUser">
+        select * from tb_card_login_user where flag=0
+    </select>
+
+</mapper>

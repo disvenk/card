@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardCustomerLogMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardCustomerLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="card_customer_id" jdbcType="BIGINT" property="cardCustomerId" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="login_telephone" jdbcType="VARCHAR" property="loginTelephone" />
+    <result column="card_type" jdbcType="TINYINT" property="cardType" />
+    <result column="operate_type" jdbcType="BIT" property="operateType" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+  </resultMap>
+</mapper>

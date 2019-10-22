@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbRedPacketMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbRedPacket">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="red_money" jdbcType="DECIMAL" property="redMoney" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="shop_detail_id" jdbcType="VARCHAR" property="shopDetailId" />
+    <result column="red_remainder_money" jdbcType="DECIMAL" property="redRemainderMoney" />
+    <result column="red_type" jdbcType="INTEGER" property="redType" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="state" jdbcType="BIT" property="state" />
+  </resultMap>
+
+  <!--查询所有可用的红包-->
+  <select id="selectEableUseAll" resultType="com.resto.msgc.backend.card.entity.TbRedPacket">
+    select * from tb_red_packet where customer_id=#{customerId} and red_remainder_money>0 and red_type=#{redType} order by create_time asc
+  </select>
+
+  <update id="updateredRemainderMoneyById">
+    update tb_red_packet set red_remainder_money=#{redRemainderMoney} where id=#{id}
+  </update>
+</mapper>

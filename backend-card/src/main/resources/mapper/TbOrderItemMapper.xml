@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbOrderItemMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbOrderItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="article_name" jdbcType="VARCHAR" property="articleName" />
+    <result column="article_designation" jdbcType="VARCHAR" property="articleDesignation" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="base_unit_price" jdbcType="DECIMAL" property="baseUnitPrice" />
+    <result column="final_price" jdbcType="DECIMAL" property="finalPrice" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="pos_discount" jdbcType="VARCHAR" property="posDiscount" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="article_id" jdbcType="VARCHAR" property="articleId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="meal_item_id" jdbcType="BIGINT" property="mealItemId" />
+    <result column="kitchen_id" jdbcType="VARCHAR" property="kitchenId" />
+    <result column="recommend_id" jdbcType="VARCHAR" property="recommendId" />
+    <result column="orgin_count" jdbcType="INTEGER" property="orginCount" />
+    <result column="refund_count" jdbcType="INTEGER" property="refundCount" />
+    <result column="meal_fee_number" jdbcType="INTEGER" property="mealFeeNumber" />
+    <result column="change_count" jdbcType="INTEGER" property="changeCount" />
+    <result column="print_fail_flag" jdbcType="BIT" property="printFailFlag" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="need_remind" jdbcType="BIT" property="needRemind" />
+  </resultMap>
+</mapper>

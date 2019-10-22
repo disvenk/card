@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardDiscountMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardDiscount">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="discount_name" jdbcType="VARCHAR" property="discountName" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="is_open" jdbcType="TINYINT" property="isOpen" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap1" type="com.resto.msgc.backend.card.entity.TbCardDiscount" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="discount_name" property="discountName" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="is_open" property="isOpen" jdbcType="TINYINT" />
+    <collection property="tbCardDiscountDetailList" javaType="java.util.List" ofType="com.resto.msgc.backend.card.entity.TbCardDiscountDetail">
+      <id column="discount_detail_id" property="id"/>
+      <result column="discount_week" property="discountWeek"/>
+      <result column="discount_time" property="discountTime"/>
+      <result column="discount" property="discount"/>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, discount_name, created_at, updated_at, delete_flag, is_open
+  </sql>
+
+
+  <select id="selectByPageNumSize" resultType="TbCardDiscount">
+    select
+      *
+    from tb_card_discount
+  </select>
+
+  <select id="cardDiscountOne" resultType="com.resto.msgc.backend.card.entity.TbCardDiscountDetail">
+    SELECT
+	  d.*
+    FROM
+         tb_card_customer c,tb_card_discount t,tb_card_discount_detail d
+    WHERE c.discount_id=t.id AND d.discount_id=t.id
+    AND c.card_id=#{cardId}
+  </select>
+
+  <select id="selectById" resultType="com.resto.msgc.backend.card.entity.TbCardDiscount">
+    select * from tb_card_discount where id=#{id}
+  </select>
+
+  <select id="selectDetailById" parameterType="java.lang.Long" resultMap="BaseResultMap1">
+    SELECT
+    tcd.*, tcdd.id discount_detail_id,
+    tcdd.discount_week,
+    tcdd.discount_time,
+    tcdd.discount
+    FROM
+    tb_card_discount tcd
+    INNER JOIN tb_card_discount_detail tcdd ON tcd.id = tcdd.discount_id
+    WHERE
+    tcd.id = #{id}
+    AND tcd.is_open = 1
+  </select>
+</mapper>

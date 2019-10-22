@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardRechangeMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardRechange">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="charge_money" jdbcType="DECIMAL" property="chargeMoney" />
+    <result column="reward_money" jdbcType="DECIMAL" property="rewardMoney" />
+    <result column="charge_balance" jdbcType="DECIMAL" property="chargeBalance" />
+    <result column="reward_balance" jdbcType="DECIMAL" property="rewardBalance" />
+    <result column="cost" jdbcType="DECIMAL" property="cost" />
+    <result column="card_customer_id" jdbcType="BIGINT" property="cardCustomerId" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" typeHandler="com.resto.conf.mybatis.handle.ValuedEnumTypeHandler" />
+    <result column="label_text" jdbcType="VARCHAR" property="labelText" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="charge_setting_id" jdbcType="VARCHAR" property="chargeSettingId" />
+    <result column="card_type" jdbcType="TINYINT" property="cardType" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+  </resultMap>
+
+  <select id="selectByPageNumSize" resultType="TbCardRechange">
+    select *
+    from tb_card_rechange
+    <where>
+      <if test="cardRechange.deleteFlag != null">
+        delete_flag = #{cardRechange.deleteFlag}
+
+      </if>
+    </where>
+  </select>
+
+  <!--实体充值记录one start end-->
+  <select id="selectEntityChargeByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandEntityCardChargeDto">
+     select
+  IFNULL(sum(charge_money),0) as 'chareCount',
+  (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=1
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+        and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+        ) as 'workerCardChargeCount',
+  (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'normalCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'tempCardChargeCount',
+  (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=3
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'cashChargeCount',
+  (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=4
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'chequeCardChargeCount',
+  (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=1
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'wechatCardChargeCount',
+  (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=2
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'alipayCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=5
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'starCardChargeCount',
+    (select IFNULL(SUM(reward_money),0) from tb_card_rechange where pay_type!=5
+     and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'foodmemberRecharge',
+    (select IFNULL(SUM(reward_money),0) from tb_card_rechange where pay_type=5
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'starRecharge'
+  from tb_card_rechange
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    where date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+  </select>
+
+  <select id="selectNormalChargeByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandNormalChargeDto">
+    select
+    IFNULL(sum(charge_money),0) as 'chareCount',
+    (select count(1) from tb_card_rechange where card_type=0
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'chargeNum',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=3
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'cashChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=4
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'chequeCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=1
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'wechatCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=2
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'alipayCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=5
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'starCardChargeCount'
+    from tb_card_rechange
+      where card_type=0 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+
+  </select>
+
+  <select id="selectTemporaryChargeByStartAndEnd" resultType="com.resto.msgc.backend.card.dto.BrandNormalChargeDto">
+    select
+    IFNULL(sum(charge_money),0) as 'chareCount',
+    (select count(1) from tb_card_rechange where card_type=2
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'chargeNum',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2 and pay_type=3
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'cashChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2 and pay_type=4
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'chequeCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2 and pay_type=1
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'wechatCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2 and pay_type=2
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'alipayCardChargeCount',
+     (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2 and pay_type=5
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    ) as 'starCardChargeCount'
+    from tb_card_rechange
+    where card_type=2 and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+
+  </select>
+
+
+  <select id="selelctWorkerChargeAll" resultType="com.resto.msgc.backend.card.dto.BrandWorkerChargeAllDto" >
+        select
+    tcc.company_name as 'companyName',
+    count(1) as 'chargeNum',
+    IFNULL(sum(tcr.charge_money),0) as 'chargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=3
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'cashChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=4
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'chequeCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=1
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'wechatCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=2
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'alipayCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=5
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+      and date_format(created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    ) as 'starCardChargeCount'
+     from tb_card_rechange tcr LEFT JOIN tb_card_company tcc on tcr.company_id=tcc.id
+    where tcr.card_type=1
+    <if test="beginDate!=null and !beginDate.equals('') and endDate!=null and !endDate.equals('')">
+    and date_format(tcr.created_at,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+    </if>
+    GROUP BY tcc.company_name order by tcr.created_at asc
+  </select>
+
+  <!--充值记录moth-->
+  <select id="selectEntityChargeByMoth" resultType="com.resto.msgc.backend.card.dto.BrandEntityCardChargeDto">
+    select
+    IFNULL(sum(charge_money),0) as 'chareCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=1
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m')=#{mothDate}
+    </if>
+    ) as 'workerCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=2
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'normalCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'tempCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=2
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'cashChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=4
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'chequeCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=1
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'wechatCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=2
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'alipayCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where pay_type=5
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'starCardChargeCount',
+    (select IFNULL(SUM(reward_money),0) from tb_card_rechange where pay_type=5
+    and date_format(created_at,'%Y-%m')  =#{mothDate}
+    ) as 'foodmemberRecharge',
+    (select IFNULL(SUM(reward_money),0) from tb_card_rechange where pay_type!=5
+    and date_format(created_at,'%Y-%m')  =#{mothDate}
+    ) as 'starRecharge'
+    from tb_card_rechange
+    <if test="mothDate!=null and !mothDate.equals('')">
+      where date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+  </select>
+
+  <select id="selectNormalChargeByMoth" resultType="com.resto.msgc.backend.card.dto.BrandNormalChargeDto">
+    select
+    IFNULL(sum(charge_money),0) as 'chareCount',
+    (select count(1) from tb_card_rechange where card_type=0
+    and date_format(created_at,'%Y-%m') =#{mothDate}
+    ) as 'chargeNum',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=3
+    and date_format(created_at,'%Y-%m') =#{mothDate}
+    ) as 'cashChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=4
+    and date_format(created_at,'%Y-%m') =#{mothDate}
+    ) as 'chequeCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=1
+    and date_format(created_at,'%Y-%m') =#{mothDate}
+    ) as 'wechatCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=2
+    and date_format(created_at,'%Y-%m') =#{mothDate}
+    ) as 'alipayCardChargeCount',
+     (select IFNULL(sum(charge_money),0) from tb_card_rechange where card_type=0 and pay_type=5
+    and date_format(created_at,'%Y-%m') =#{mothDate}
+    ) as 'starCardChargeCount'
+    from tb_card_rechange
+    where card_type=0 and date_format(created_at,'%Y-%m') =#{mothDate}
+
+  </select>
+
+
+  <select id="selelctWorkerChargeAllByMoth" resultType="com.resto.msgc.backend.card.dto.BrandWorkerChargeAllDto" >
+    select
+    tcc.company_name as 'companyName',
+    count(1) as 'chargeNum',
+    IFNULL(sum(tcr.charge_money),0) as 'chargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=3
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'cashChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=4
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'chequeCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=1
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'wechatCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=2
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'alipayCardChargeCount',
+    (select IFNULL(sum(charge_money),0) from tb_card_rechange where company_id=tcc.id and pay_type=5
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(created_at,'%Y-%m') =#{mothDate}
+    </if>
+    ) as 'starCardChargeCount'
+    from tb_card_rechange tcr LEFT JOIN tb_card_company tcc on tcr.company_id=tcc.id
+    where tcr.card_type=1
+    <if test="mothDate!=null and !mothDate.equals('')">
+      and date_format(tcr.created_at,'%Y-%m') =#{mothDate}
+    </if>
+    GROUP BY tcc.company_name order by tcr.created_at asc
+  </select>
+
+
+  <select id="selectChargeCardCompanyAll" resultType="com.resto.msgc.backend.card.dto.BrandChargeCardCompanyAllDto">
+          SELECT
+      tccc.id as 'id',
+      trcr.date as 'date',
+      trcr.time as 'time',
+      tccc.company_name as 'companyName',
+      trcr.customerName as 'customerName',
+      trcr.tel as 'tel',
+      trcr.idCard as 'idCard',
+      trcr.cardPayType as 'cardPayType',
+      IFNULL(trcr.chargeMoney,0) as 'chargeMoney',
+      trcr.created_at as 'created'
+       from
+      (select
+      tcr.created_at,
+      DATE_FORMAT(tcr.created_at,'%Y-%m-%d') as 'date',
+      DATE_FORMAT(tcr.created_at,'%H:%i:%s') as 'time',
+      tcr.company_id as 'companyId',
+      tcc.customer_name as 'customerName',
+      tcc.telephone as 'tel',
+      tcc.id_card as 'idCard',
+      case
+      tcr.pay_type
+      when 1 then '微信'
+      when 2 then '支付宝'
+      when 3 then '现金'
+      when 4 then '支票'
+      when 5 then '天子星'
+      else '未知'
+      end
+      as 'cardPayType',
+      IFNULL(tcr.charge_money,0) as 'chargeMoney'
+      from tb_card_rechange tcr RIGHT JOIN tb_card_customer tcc on tcr.card_customer_id=tcc.id
+      where
+    <if test="mothDate!=null and !mothDate.equals('')">
+      date_format(tcr.created_at,'%Y-%m')=#{mothDate} and
+    </if>
+      tcr.company_id=#{companyId} order by tcr.created_at asc) trcr LEFT JOIN tb_card_company tccc on trcr.companyId=tccc.id ORDER BY trcr.created_at asc
+  </select>
+
+  <select id="selectChargeCardNormalAll" resultType="com.resto.msgc.backend.card.dto.BrandChargeCardCompanyAllDto">
+    select
+    tcr.created_at,
+    DATE_FORMAT(tcr.created_at,'%Y-%m-%d') as 'date',
+    DATE_FORMAT(tcr.created_at,'%H:%i:%s') as 'time',
+    tcc.customer_name as 'customerName',
+    tcc.telephone as 'tel',
+    tcc.id_card as 'idCard',
+    case
+    tcr.pay_type
+    when 1 then '微信'
+    when 2 then '支付宝'
+    when 3 then '现金'
+    when 4 then '支票'
+    when 5 then '天子星'
+    else '未知'
+    end
+    as 'cardPayType',
+    IFNULL(tcr.charge_money,0) as 'chargeMoney'
+    from tb_card_rechange tcr RIGHT JOIN tb_card_customer tcc on tcr.card_customer_id=tcc.id
+    where
+    date_format(tcr.created_at,'%Y-%m')=#{mothDate} and tcr.card_type=0
+    order by tcr.created_at asc
+  </select>
+
+  <select id="pinCardMoney" resultType="com.resto.msgc.backend.card.dto.PinCardMoneyDto">
+    select
+	  sum(r.charge_balance) balanceMoney,
+	  sum(r.cost) cost,
+	  r.pay_type payType
+    from
+        tb_card_rechange r,tb_card_customer c
+    where r.card_customer_id=c.id
+    and c.delete_flag=0
+    and c.card_id=#{cardId}
+    group by r.pay_type
+  </select>
+
+
+  <!--查询所有可付款的记录-->
+  <select id="selectEnableChargeRecord" resultType="com.resto.msgc.backend.card.entity.TbCardRechange">
+    select * from tb_card_rechange where card_customer_id=#{customerId} and (charge_balance>0 or reward_balance>0) ORDER by created_at asc
+  </select>
+
+  <!--更改赠送剩余金额-->
+  <update id="updateRewardBalance" >
+    update tb_card_rechange set reward_balance=#{reWardBalance} where id=#{id}
+  </update>
+  <!--更改充值剩余金额-->
+  <update id="updateChargeBalance" >
+    update tb_card_rechange set charge_balance=#{chargeBalance} where id=#{id}
+  </update>
+
+  <!--更改充值剩余金额-->
+  <update id="updateChargeBalanceForRefund1" >
+    update tb_card_rechange set reward_balance=reward_balance+#{refundMoney} where id=#{id}
+  </update>
+  <update id="updateChargeBalanceForRefund2" >
+    update tb_card_rechange set charge_balance=charge_balance+#{refundMoney} where id=#{id}
+  </update>
+</mapper>

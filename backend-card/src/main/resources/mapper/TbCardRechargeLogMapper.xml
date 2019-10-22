@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardRechargeLogMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardRechargeLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="charge_order_id" jdbcType="VARCHAR" property="chargeOrderId" />
+    <result column="trade_no" jdbcType="VARCHAR" property="tradeNo" />
+    <result column="card_customer_id" jdbcType="BIGINT" property="cardCustomerId" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="login_telephone" jdbcType="VARCHAR" property="loginTelephone" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="remain" jdbcType="DECIMAL" property="remain" />
+    <result column="pay_data" property="payData" jdbcType="LONGVARCHAR"/>
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="created_id" jdbcType="VARCHAR" property="createdId" />
+    <result column="updated_id" jdbcType="VARCHAR" property="updatedId" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" typeHandler="com.resto.conf.mybatis.handle.ValuedEnumTypeHandler" />
+  </resultMap>
+
+  <select id="findRemain" resultType="TbChargeOrder">
+      SELECT DISTINCT
+      d.charge_balance,
+      d.type,
+      d.reward_balance,
+      d.total_balance
+      FROM
+      tb_card_customer a
+      INNER JOIN tb_card_recharge_log b ON a.card_id = b.card_id
+      INNER JOIN tb_account_log c ON a.account_id = c.account_id
+      INNER JOIN tb_charge_order d ON b.charge_order_id = d.id
+      WHERE
+      c.source IN (10,11)
+      AND a.card_id = #{cardId}
+  </select>
+
+  <delete id="deleteByPinCard">
+      DELETE
+       a,
+       b,
+       c,
+       d
+      FROM
+          tb_card_customer AS a,
+          tb_card_recharge_log AS b,
+          tb_account_log AS c,
+          tb_charge_order AS d
+      WHERE
+          a.card_id = b.card_id
+      AND a.account_id = c.account_id
+      AND b.charge_order_id = d.id
+      AND c.source IN (10,11)
+      AND a.card_id = #{cardId}
+  </delete>
+
+</mapper>

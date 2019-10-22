@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCouponMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCoupon">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="value" jdbcType="DECIMAL" property="value" />
+    <result column="min_amount" jdbcType="DECIMAL" property="minAmount" />
+    <result column="begin_date" jdbcType="DATE" property="beginDate" />
+    <result column="end_date" jdbcType="DATE" property="endDate" />
+    <result column="begin_time" jdbcType="TIME" property="beginTime" />
+    <result column="end_time" jdbcType="TIME" property="endTime" />
+    <result column="is_used" jdbcType="BIT" property="isUsed" />
+    <result column="using_time" jdbcType="TIMESTAMP" property="usingTime" />
+    <result column="coupon_source" jdbcType="VARCHAR" property="couponSource" />
+    <result column="use_with_account" jdbcType="BIT" property="useWithAccount" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="distribution_mode_id" jdbcType="INTEGER" property="distributionModeId" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="shop_detail_id" jdbcType="VARCHAR" property="shopDetailId" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="coupon_type" jdbcType="BIT" property="couponType" />
+    <result column="push_day" jdbcType="INTEGER" property="pushDay" />
+    <result column="recommend_delay_time" jdbcType="INTEGER" property="recommendDelayTime" />
+    <result column="new_custom_coupon_id" jdbcType="BIGINT" property="newCustomCouponId" />
+  </resultMap>
+
+
+  <!--查询所有的优惠券-->
+  <select id="selectEnableCoupon" resultType="com.resto.msgc.backend.card.entity.TbCoupon">
+    <![CDATA[
+    select *
+    from tb_coupon where is_used=0
+    and UNIX_TIMESTAMP(end_date)  <=  UNIX_TIMESTAMP()
+    and use_with_account=1
+    and customer_id=#{customerId}
+    ]]>
+  </select>
+
+  <update id="updateIsUsed">
+    UPDATE tb_coupon set is_used=1 where id=#{id}
+  </update>
+</mapper>

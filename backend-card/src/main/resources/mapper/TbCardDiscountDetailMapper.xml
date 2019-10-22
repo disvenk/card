@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardDiscountDetailMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardDiscountDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="discount_id" jdbcType="BIGINT" property="discountId" />
+    <result column="discount_week" jdbcType="VARCHAR" property="discountWeek" />
+    <result column="discount_time" jdbcType="VARCHAR" property="discountTime" />
+    <result column="discount" jdbcType="VARCHAR" property="discount" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+  </resultMap>
+  <delete id="deleteDiscountId" parameterType="Long">
+    delete from tb_card_discount_detail
+    where discount_id = #{discountId,jdbcType=BIGINT}
+  </delete>
+
+  <select id="selectdiscountId" resultType="TbCardDiscountDetail">
+    SELECT * FROM tb_card_discount_detail WHERE discount_id = #{discountId,jdbcType=BIGINT}
+  </select>
+</mapper>

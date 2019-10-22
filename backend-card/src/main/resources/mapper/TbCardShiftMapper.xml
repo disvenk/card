@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardShiftMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardShift">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cash_money" jdbcType="DECIMAL" property="cashMoney" />
+    <result column="wechat_money" jdbcType="DECIMAL" property="wechatMoney" />
+    <result column="actual_cash" jdbcType="DECIMAL" property="actualCash" />
+    <result column="ali_money" jdbcType="DECIMAL" property="aliMoney" />
+    <result column="cheque_money" jdbcType="DECIMAL" property="chequeMoney" />
+    <result column="star_money" jdbcType="DECIMAL" property="starMoney" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" typeHandler="com.resto.conf.mybatis.handle.ValuedEnumTypeHandler" />
+    <result column="created_id" jdbcType="VARCHAR" property="createdId" />
+    <result column="update_id" jdbcType="VARCHAR" property="updateId" />
+  </resultMap>
+  
+  <select id="selectBusinessCountByDate" resultType="com.resto.msgc.backend.card.dto.BrandEntityCardChargeDto">
+          select
+        date_format(created_at,'%Y-%m-%d') as 'created',
+          IFNULL(sum(charge_money+IFNULL(cost,0)),0) as 'chareCount',
+          IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=3
+      <if test="date!=null and !date.equals('') ">
+            and date_format(created_at,'%Y-%m-%d') =#{date}
+      </if>
+            ),0) as 'cashChargeCount',
+          IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=4
+      <if test="date!=null and !date.equals('') ">
+            and date_format(created_at,'%Y-%m-%d') =#{date}
+      </if>
+            ),0) as 'chequeCardChargeCount',
+          IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=1
+      <if test="date!=null and !date.equals('') ">
+            and date_format(created_at,'%Y-%m-%d') =#{date}
+      </if>
+            ),0) as 'wechatCardChargeCount',
+          IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=2
+      <if test="date!=null and !date.equals('') ">
+            and date_format(created_at,'%Y-%m-%d') =#{date}
+      </if>
+            ),0) as 'alipayCardChargeCount',
+      IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=5
+      <if test="date!=null and !date.equals('') ">
+          and date_format(created_at,'%Y-%m-%d') =#{date}
+      </if>
+      ),0) as 'starCardChargeCount'
+          from tb_card_rechange
+      <if test="date!=null and !date.equals('') ">
+    where date_format(created_at,'%Y-%m-%d') =#{date}
+      </if>
+  </select>
+
+    <!--<select id="selectBusinessCountByDate2" resultType="com.resto.msgc.backend.card.dto.BrandEntityCardChargeDto">
+        select
+        date_format(created_at,'%Y-%m-%d') as 'created',
+        IFNULL(sum(charge_money+IFNULL(cost,0)),0) as 'chareCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=3
+        <if test="date!=null and !date.equals('') ">
+            and unix_timestamp(created_at) >unix_timestamp(#{date})
+        </if>
+        ),0) as 'cashChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=4
+        <if test="date!=null and !date.equals('') ">
+            and unix_timestamp(created_at) >unix_timestamp(#{date})
+        </if>
+        ),0) as 'chequeCardChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=1
+        <if test="date!=null and !date.equals('') ">
+            and unix_timestamp(created_at) >unix_timestamp(#{date})
+        </if>
+        ),0) as 'wechatCardChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=2
+        <if test="date!=null and !date.equals('') ">
+            and unix_timestamp(created_at) >unix_timestamp(#{date})
+        </if>
+        ),0) as 'alipayCardChargeCount'
+        from tb_card_rechange
+        <if test="date!=null and !date.equals('') ">
+            where unix_timestamp(created_at) >unix_timestamp(#{date})
+        </if>
+    </select>-->
+
+    <select id="selectOncallBusinessCountByDate" resultType="com.resto.msgc.backend.card.dto.BrandOncallBusinessDto">
+        select
+            date_format(created_at,'%H:%i:%s') as 'date',
+            IFNULL(sum(cash_money),0) as 'cashMoney',
+            IFNULL(sum(ali_money),0) as 'aliMoney',
+            IFNULL(sum(wechat_money),0) as 'wechatMoney',
+            IFNULL(sum(cheque_money),0) as 'chequeMoney',
+            IFNULL(sum(star_money),0) as 'starMoney',
+			IFNULL(sum(actual_cash),0) as 'actualCash',
+            created_id as 'tel'
+            from tb_card_shift where date_format(created_at,'%Y-%m-%d') =#{date} GROUP BY created_id
+    </select>
+
+
+    <select id="selectStartAndEndCharge" resultType="com.resto.msgc.backend.card.dto.BrandEntityCardChargeDto">
+         select
+        date_format(created_at,'%Y-%m-%d') as 'created',
+        IFNULL(sum(charge_money+IFNULL(cost,0)),0) as 'chareCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=3
+
+            and created_at BETWEEN #{startDate} and #{endDate}
+
+        ),0) as 'cashChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=4
+
+            and created_at BETWEEN #{startDate} and #{endDate}
+
+        ),0) as 'chequeCardChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=1
+
+            and created_at BETWEEN #{startDate} and #{endDate}
+
+        ),0) as 'wechatCardChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=2
+
+            and created_at BETWEEN #{startDate} and #{endDate}
+
+        ),0) as 'alipayCardChargeCount',
+        IFNULL((select sum(charge_money+IFNULL(cost,0)) from tb_card_rechange where pay_type=5
+
+            and created_at BETWEEN #{startDate} and #{endDate}
+
+        ),0) as 'starCardChargeCount'
+        from tb_card_rechange
+
+            where created_at BETWEEN #{startDate} and #{endDate}
+    </select>
+</mapper>

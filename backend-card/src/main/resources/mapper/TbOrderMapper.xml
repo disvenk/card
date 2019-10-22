@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbOrderMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="table_number" jdbcType="VARCHAR" property="tableNumber" />
+    <result column="stall_name" jdbcType="VARCHAR" property="stallName" />
+    <result column="customer_count" jdbcType="INTEGER" property="customerCount" />
+    <result column="accounting_time" jdbcType="DATE" property="accountingTime" />
+    <result column="order_state" jdbcType="INTEGER" property="orderState" />
+    <result column="production_status" jdbcType="INTEGER" property="productionStatus" />
+    <result column="original_amount" jdbcType="DECIMAL" property="originalAmount" />
+    <result column="reduction_amount" jdbcType="DECIMAL" property="reductionAmount" />
+    <result column="payment_amount" jdbcType="DECIMAL" property="paymentAmount" />
+    <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
+    <result column="ali_pay_discount_money" jdbcType="DECIMAL" property="aliPayDiscountMoney" />
+    <result column="article_count" jdbcType="INTEGER" property="articleCount" />
+    <result column="serial_number" jdbcType="VARCHAR" property="serialNumber" />
+    <result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime" />
+    <result column="print_times" jdbcType="INTEGER" property="printTimes" />
+    <result column="allow_cancel" jdbcType="BIT" property="allowCancel" />
+    <result column="allow_appraise" jdbcType="BIT" property="allowAppraise" />
+    <result column="closed" jdbcType="BIT" property="closed" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="distribution_date" jdbcType="DATE" property="distributionDate" />
+    <result column="distribution_time_id" jdbcType="INTEGER" property="distributionTimeId" />
+    <result column="delivery_point_id" jdbcType="INTEGER" property="deliveryPointId" />
+    <result column="shop_detail_id" jdbcType="VARCHAR" property="shopDetailId" />
+    <result column="distribution_mode_id" jdbcType="INTEGER" property="distributionModeId" />
+    <result column="ver_code" jdbcType="VARCHAR" property="verCode" />
+    <result column="push_order_time" jdbcType="TIMESTAMP" property="pushOrderTime" />
+    <result column="print_order_time" jdbcType="TIMESTAMP" property="printOrderTime" />
+    <result column="call_number_time" jdbcType="TIMESTAMP" property="callNumberTime" />
+    <result column="order_mode" jdbcType="INTEGER" property="orderMode" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="amount_with_children" jdbcType="DECIMAL" property="amountWithChildren" />
+    <result column="parent_order_id" jdbcType="VARCHAR" property="parentOrderId" />
+    <result column="allow_continue_order" jdbcType="BIT" property="allowContinueOrder" />
+    <result column="count_with_child" jdbcType="INTEGER" property="countWithChild" />
+    <result column="last_order_time" jdbcType="TIMESTAMP" property="lastOrderTime" />
+    <result column="person_count" jdbcType="INTEGER" property="personCount" />
+    <result column="table_no" jdbcType="VARCHAR" property="tableNo" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="pay_mode" jdbcType="INTEGER" property="payMode" />
+    <result column="service_price" jdbcType="DECIMAL" property="servicePrice" />
+    <result column="eleme_order_id" jdbcType="VARCHAR" property="elemeOrderId" />
+    <result column="meal_fee_price" jdbcType="DECIMAL" property="mealFeePrice" />
+    <result column="meal_all_number" jdbcType="INTEGER" property="mealAllNumber" />
+    <result column="base_money" jdbcType="DECIMAL" property="baseMoney" />
+    <result column="base_order_money" jdbcType="DECIMAL" property="baseOrderMoney" />
+    <result column="base_customer_count" jdbcType="INTEGER" property="baseCustomerCount" />
+    <result column="need_scan" jdbcType="BIT" property="needScan" />
+    <result column="base_meal_all_count" jdbcType="INTEGER" property="baseMealAllCount" />
+    <result column="pay_type" jdbcType="BIT" property="payType" />
+    <result column="is_pay" jdbcType="BIT" property="isPay" />
+    <result column="is_confirm" jdbcType="BIT" property="isConfirm" />
+    <result column="is_refund_order" jdbcType="BIT" property="isRefundOrder" />
+    <result column="give_change" jdbcType="DECIMAL" property="giveChange" />
+    <result column="is_get_share_coupon" jdbcType="BIT" property="isGetShareCoupon" />
+    <result column="is_pos_pay" jdbcType="BIT" property="isPosPay" />
+    <result column="order_remark_ids" jdbcType="VARCHAR" property="orderRemarkIds" />
+    <result column="print_fail_flag" jdbcType="BIT" property="printFailFlag" />
+    <result column="print_kitchen_flag" jdbcType="BIT" property="printKitchenFlag" />
+    <result column="customer_address_id" jdbcType="VARCHAR" property="customerAddressId" />
+    <result column="pos_discount" jdbcType="DECIMAL" property="posDiscount" />
+    <result column="erase_money" jdbcType="DECIMAL" property="eraseMoney" />
+    <result column="no_discount_money" jdbcType="DECIMAL" property="noDiscountMoney" />
+    <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+    <result column="is_consumption_rebate" jdbcType="BIT" property="isConsumptionRebate" />
+    <result column="rebate_time" jdbcType="TIMESTAMP" property="rebateTime" />
+    <result column="order_before" jdbcType="BIT" property="orderBefore" />
+    <result column="before_id" jdbcType="VARCHAR" property="beforeId" />
+    <result column="sauce_fee_count" jdbcType="INTEGER" property="sauceFeeCount" />
+    <result column="sauce_fee_price" jdbcType="DECIMAL" property="sauceFeePrice" />
+    <result column="towel_fee_count" jdbcType="INTEGER" property="towelFeeCount" />
+    <result column="towel_fee_price" jdbcType="DECIMAL" property="towelFeePrice" />
+    <result column="tableware_fee_count" jdbcType="INTEGER" property="tablewareFeeCount" />
+    <result column="tableware_fee_price" jdbcType="DECIMAL" property="tablewareFeePrice" />
+    <result column="is_use_new_service" jdbcType="BIT" property="isUseNewService" />
+    <result column="data_origin" jdbcType="INTEGER" property="dataOrigin" />
+    <result column="order_pos_discount_money" jdbcType="DECIMAL" property="orderPosDiscountMoney" />
+    <result column="member_discount_money" jdbcType="DECIMAL" property="memberDiscountMoney" />
+    <result column="member_discount" jdbcType="DECIMAL" property="memberDiscount" />
+    <result column="need_confirm_order_item" jdbcType="BIT" property="needConfirmOrderItem" />
+    <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" typeHandler="com.resto.conf.mybatis.handle.ValuedEnumTypeHandler" />
+    <result column="pos_back_ups" jdbcType="LONGVARCHAR" property="posBackUps" />
+  </resultMap>
+
+<select id="selectBrandByDateFromStartAndEnd" parameterType="java.util.Map" resultType="com.alibaba.fastjson.JSONObject">
+<![CDATA[
+     select IFNULL(SUM(r.orderCount),0) 'orderCount',
+			 IFNULL(SUM(r.orderPrice),0) 'originalAmount',
+				r.actualMoney as 'paymentAmount',
+				IFNULL(r.discountMoney,0)+IFNULL(SUM(r.order_pos_discount_money),0)+IFNULL(SUM(r.member_discount_money),0)+IFNULL(SUM(r.erase_money),0) 'reductionAmount',
+				IFNULL(r.refundMoney,0) as 'refundMoney'
+			 from (
+		SELECT
+			o.order_pos_discount_money,
+			o.member_discount_money,
+			o.erase_money,
+			IF(ISNULL(parent_order_id), 1, 0)  'orderCount',
+			SUM(toi.count*toi.unit_price)-sum(IFNULL(toi.refund_count,0)*toi.unit_price) + o.service_price + o.meal_fee_price 'orderPrice',
+			/*order_money 'orderPrice',*/
+			(select sum(pay_value) from tb_order_payment_item where
+			payment_mode_id in (1,5,6,10,12,20,23) and date_format(pay_time,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}) as 'actualMoney',
+(select sum(pay_value) from tb_order_payment_item where payment_mode_id in (2,3,7,8,13,15,14,17,21,24) and date_format(pay_time,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}) as 'discountMoney',
+			(select ABS(IFNULL(sum(pay_value),0)) from tb_order_payment_item where payment_mode_id in (11,19,25) and date_format(pay_time,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}) as 'refundMoney'
+		FROM tb_order o
+		INNER JOIN tb_order_item toi
+		on o.id = toi.order_id
+		WHERE o.production_status IN (2,3,4,6)
+		AND	o.order_state IN (2,10,11)
+		AND o.create_time >= #{beginDate}
+		AND CONCAT(#{endDate},' 23:59:59') >= o.create_time
+		GROUP BY o.id
+        ) r
+        ]]>
+</select>
+
+  <!--查询所有的档口-->
+    <select id="selectShopName" resultType="java.lang.String">
+        SELECT DISTINCT(stall_name) FROM tb_order
+    </select>
+
+  <!--查询每个档口下的订单数-->
+  <select id="selectShopNameAndCount" resultType="com.alibaba.fastjson.JSONObject">
+       select stall_name as 'shopName',
+    count(1) as 'orderCount',
+    sum(original_amount) 'originalAmount',
+    IFNULL(sum(IFNULL(order_pos_discount_money,0)+IFNULL(member_discount_money,0)+IFNULL(erase_money,0)),0) as 'discountMoney'
+    from tb_order where production_status IN (2,3,4,6) and order_state IN (2,10,11) and date_format(create_time,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate} group by stall_name
+  </select>
+
+
+  <!--通过档口名称查询其他金额项-->
+  <select id="selectOtherByShopName" resultType="com.alibaba.fastjson.JSONObject">
+    select ABS(IFNULL(SUM(r.pay_value),0)) as 'paymentAmount' from(SELECT
+    o.stall_name,
+    o.create_time,
+    opi.payment_mode_id,
+    opi.pay_value
+     FROM tb_order o LEFT JOIN tb_order_payment_item opi on o.id=opi.order_id where o.production_status IN (2,3,4,6) and o.order_state IN (2,10,11)) r
+     where stall_name=#{stallName} and r.payment_mode_id in
+    <foreach collection="list" item="paymentModeId" index="index"
+             open="(" close=")" separator=",">
+      #{paymentModeId}
+    </foreach>
+    and date_format(r.create_time,'%Y-%m-%d') BETWEEN #{beginDate} and #{endDate}
+  </select>
+
+  <!--moth-->
+  <!--查询每个档口下的订单数-->
+  <select id="selectShopNameAndCountMoth" resultType="com.alibaba.fastjson.JSONObject">
+    select stall_name as 'shopName',
+    count(1) as 'orderCount',
+    sum(original_amount) 'originalAmount',
+    IFNULL(sum(IFNULL(order_pos_discount_money,0)+IFNULL(member_discount_money,0)+IFNULL(erase_money,0)),0) as 'discountMoney'
+    from tb_order where production_status IN (2,3,4,6) and order_state IN (2,10,11) and date_format(create_time,'%Y-%m') =#{mothDate} group by stall_name
+  </select>
+
+  <select id="selectOtherByShopNameMoth" resultType="com.alibaba.fastjson.JSONObject">
+    select ABS(IFNULL(SUM(r.pay_value),0)) as 'paymentAmount' from(SELECT
+    o.stall_name,
+    o.create_time,
+    opi.payment_mode_id,
+    opi.pay_value
+    FROM tb_order o LEFT JOIN tb_order_payment_item opi on o.id=opi.order_id where o.production_status IN (2,3,4,6) and o.order_state IN (2,10,11)) r
+    where stall_name=#{stallName} and r.payment_mode_id in
+    <foreach collection="list" item="paymentModeId" index="index"
+             open="(" close=")" separator=",">
+      #{paymentModeId}
+    </foreach>
+    and date_format(r.create_time,'%Y-%m') =#{mothDate}
+  </select>
+
+
+  <!--多个sheet-->
+  <!--查询档口每一天的折扣-->
+  <select id="selectDis" resultType="java.math.BigDecimal">
+    select
+    IFNULL(sum(IFNULL(order_pos_discount_money,0)+IFNULL(member_discount_money,0)+IFNULL(erase_money,0)),0) as 'discountMoney'
+    from tb_order where stall_name=#{stallName} and production_status IN (2,3,4,6) and order_state IN (2,10,11) and date_format(create_time,'%Y-%m-%d') =#{date}
+  </select>
+
+  <select id="selectSheet1" resultType="com.resto.msgc.backend.card.dto.BusinessSheet1">
+     select
+     r.shopName as 'shopName',
+  r.date as 'date',
+  r.orderCount as 'orderCount',
+  IFNULL(r.originalAmount,0) as 'originalAmount',
+  IFNULL(r.discountMoney,0) as 'discountMoney'
+  from
+  (select
+  stall_name as 'shopName',
+  date_format(create_time,'%Y-%m-%d') as 'date',
+  count(1) as 'orderCount',
+  SUM(original_amount) as 'originalAmount',
+  IFNULL(sum(IFNULL(order_pos_discount_money,0)+IFNULL(member_discount_money,0)+IFNULL(erase_money,0)),0) as 'discountMoney'
+  from tb_order o
+  where date_format(create_time,'%Y-%m')=#{mothDate} and stall_name=#{stallName}
+  and production_status IN (2,3,4,6) and order_state IN (2,10,11)
+  GROUP BY date_format(create_time,'%Y-%m-%d') ORDER BY create_time ASC) r
+  LEFT JOIN
+  (SELECT
+  o.create_time,
+  opi.payment_mode_id,
+  IFNULL(opi.pay_value,0)
+  FROM tb_order o LEFT JOIN tb_order_payment_item opi on o.id=opi.order_id where o.production_status IN (2,3,4,6) and o.order_state IN (2,10,11)) rr on
+  r.date=date_format(rr.create_time,'%Y-%m-%d') group by r.date
+  </select>
+
+  <select id="selectSheet2" resultType="com.alibaba.fastjson.JSONObject">
+    select ABS(IFNULL(sum(pay_value),0)) as 'money' from
+    (select
+    *
+     from
+     (select
+    stall_name as 'shopName',
+    date_format(create_time,'%Y-%m-%d') as 'date',
+    count(1) as 'orderCount',
+    IFNULL(SUM(original_amount),0) as 'originalAmount',
+    IFNULL(sum(IFNULL(order_pos_discount_money,0)+IFNULL(member_discount_money,0)+IFNULL(erase_money,0)),0) as 'discountMoney'
+    from tb_order o
+          where date_format(create_time,'%Y-%m')=#{mothDate} and stall_name=#{stallName}
+        and production_status IN (2,3,4,6) and order_state IN (2,10,11)
+        GROUP BY date_format(create_time,'%Y-%m-%d') ORDER BY create_time ASC) r
+    LEFT JOIN
+    (SELECT
+        o.create_time,
+        opi.payment_mode_id,
+        IFNULL(opi.pay_value,0) as 'pay_value'
+        FROM tb_order o LEFT JOIN tb_order_payment_item opi on o.id=opi.order_id where o.production_status IN (2,3,4,6) and o.order_state IN (2,10,11)) rr on
+    r.date=date_format(rr.create_time,'%Y-%m-%d') )rrr where date=#{date} and payment_mode_id in
+        <foreach collection="list" item="paymentModeId" index="index"
+                 open="(" close=")" separator=",">
+          #{paymentModeId}
+        </foreach>
+  </select>
+
+
+</mapper>

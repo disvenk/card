@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCardCompanyMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCardCompany">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="contact_name" jdbcType="VARCHAR" property="contactName" />
+    <result column="contact_mobile" jdbcType="VARCHAR" property="contactMobile" />
+    <result column="created_at" jdbcType="VARCHAR" property="createdAt" />
+    <result column="updated_at" jdbcType="VARCHAR" property="updatedAt" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+  </resultMap>
+  <select id="selectByPageNumSize" resultType="TbCardCompany">
+    select
+      *
+    from tb_card_company
+  </select>
+  <select id="listCompanyDatas" resultType="com.resto.msgc.backend.card.dto.TbCardCompanyDto">
+    SELECT
+      y.id company_id,
+      y.company_name,
+      (SELECT COUNT(id) FROM tb_card_customer s WHERE s.company_id=y.id AND s.delete_flag=0) employees_num
+    FROM
+	  tb_card_company y
+    <if test="companyId != null">
+     WHERE y.id = #{companyId}
+    </if>
+  </select>
+  <select id="listCompanyDetailDatas" resultType="com.resto.msgc.backend.card.dto.CompanyCustomerDto">
+    SELECT
+      c.id cardcustomer_id,
+      c.card_id,
+     (SELECT d.discount_name FROM tb_card_discount d  WHERE c.discount_id=d.id) discount_name,
+      c.customer_name,
+      c.telephone,
+      c.id_card,
+      c.card_state,
+      a.remain
+    FROM
+        tb_card_customer c,tb_card_company p,tb_account a
+    WHERE c.company_id=p.id
+    AND c.account_id=a.id
+    AND c.delete_flag=0
+    AND p.id=#{companyId}
+    <if test="telephone != null">
+      AND c.telephone=#{telephone}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbCustomerMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbCustomer">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="wechat_id" jdbcType="VARCHAR" property="wechatId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="head_photo" jdbcType="VARCHAR" property="headPhoto" />
+    <result column="default_delivery_point" jdbcType="INTEGER" property="defaultDeliveryPoint" />
+    <result column="is_bind_phone" jdbcType="BIT" property="isBindPhone" />
+    <result column="regiest_time" jdbcType="TIMESTAMP" property="regiestTime" />
+    <result column="first_order_time" jdbcType="TIMESTAMP" property="firstOrderTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="last_order_shop" jdbcType="VARCHAR" property="lastOrderShop" />
+    <result column="new_notice_time" jdbcType="TIMESTAMP" property="newNoticeTime" />
+    <result column="share_customer" jdbcType="VARCHAR" property="shareCustomer" />
+    <result column="register_shop_id" jdbcType="VARCHAR" property="registerShopId" />
+    <result column="is_now_register" jdbcType="INTEGER" property="isNowRegister" />
+    <result column="is_share" jdbcType="BIT" property="isShare" />
+    <result column="birthday" jdbcType="TIMESTAMP" property="birthday" />
+    <result column="customer_detail_id" jdbcType="VARCHAR" property="customerDetailId" />
+    <result column="bind_phone_time" jdbcType="TIMESTAMP" property="bindPhoneTime" />
+    <result column="bind_phone_shop" jdbcType="VARCHAR" property="bindPhoneShop" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="real_time_coupon_ids" jdbcType="VARCHAR" property="realTimeCouponIds" />
+    <result column="subscribe" jdbcType="BIT" property="subscribe" />
+    <result column="last_table_number" jdbcType="VARCHAR" property="lastTableNumber" />
+    <result column="birthday_coupon_ids" jdbcType="VARCHAR" property="birthdayCouponIds" />
+    <result column="share_coupon_ids" jdbcType="VARCHAR" property="shareCouponIds" />
+    <result column="serial_number" jdbcType="BIGINT" property="serialNumber" />
+    <result column="share_link" jdbcType="VARCHAR" property="shareLink" />
+    <result column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+  </resultMap>
+
+<select id="selectByTelephone" resultType="com.resto.msgc.backend.card.entity.TbCustomer">
+  select * from tb_customer where telephone=#{tel}
+</select>
+
+
+  <select id="selectByAccountId" resultType="com.resto.msgc.backend.card.entity.TbCustomer">
+    select * from tb_customer where account_id=#{accountId}
+  </select>
+</mapper>

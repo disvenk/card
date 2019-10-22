@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbChargeSettingMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbChargeSetting">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="charge_money" jdbcType="DECIMAL" property="chargeMoney" />
+    <result column="reward_money" jdbcType="DECIMAL" property="rewardMoney" />
+    <result column="show_in" jdbcType="TINYINT" property="showIn" />
+    <result column="label_text" jdbcType="VARCHAR" property="labelText" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="state" jdbcType="TINYINT" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="brand_id" jdbcType="VARCHAR" property="brandId" />
+    <result column="shop_detail_id" jdbcType="VARCHAR" property="shopDetailId" />
+    <result column="number_day" jdbcType="INTEGER" property="numberDay" />
+    <result column="first_charge" jdbcType="VARCHAR" property="firstCharge" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbOrderPaymentItemMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbOrderPaymentItem">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="pay_value" jdbcType="DECIMAL" property="payValue" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="payment_mode_id" jdbcType="INTEGER" property="paymentModeId" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="is_use_bonus" jdbcType="BIT" property="isUseBonus" />
+    <result column="to_pay_id" jdbcType="VARCHAR" property="toPayId" />
+    <result column="result_data" jdbcType="LONGVARCHAR" property="resultData" />
+  </resultMap>
+
+  <select id="selectByOrderId" resultType="com.resto.msgc.backend.card.entity.TbOrderPaymentItem">
+    select * from tb_order_payment_item where order_id=#{orderId}
+  </select>
+
+  <update id="updateOrderIdByCode">
+    update tb_order_payment_item set order_id=#{orderId} where id=#{id}
+  </update>
+
+  <!--查出所有的充值赠送余额支付项-->
+  <select id="selectChargeBalancePayItem" resultType="com.resto.msgc.backend.card.entity.TbOrderPaymentItem">
+    select * from tb_order_payment_item where order_id=#{orderId} and payment_mode_id in (23,24)
+  </select>
+
+  <select id="selectChargeBalancePay" resultType="java.math.BigDecimal">
+    select IFNULL(sum(pay_value),0) from tb_order_payment_item where order_id=#{orderId} and payment_mode_id=24
+  </select>
+
+  <select id="selectByCarNumber" resultType="com.resto.msgc.backend.card.entity.TbOrderPaymentItem">
+    select id,result_data,pay_time,pay_value,remark,payment_mode_id,order_id,is_use_bonus,to_pay_id
+    from tb_order_payment_item where order_id=#{orderId}
+  </select>
+</mapper>

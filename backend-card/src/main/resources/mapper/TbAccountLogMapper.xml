@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.resto.msgc.backend.card.mapper.TbAccountLogMapper">
+  <resultMap id="BaseResultMap" type="com.resto.msgc.backend.card.entity.TbAccountLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="money" jdbcType="DECIMAL" property="money" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="payment_type" jdbcType="INTEGER" property="paymentType" />
+    <result column="remain" jdbcType="DECIMAL" property="remain" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="source" jdbcType="INTEGER" property="source" />
+    <result column="shop_detail_id" jdbcType="VARCHAR" property="shopDetailId" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="freeze_return_date" jdbcType="TIMESTAMP" property="freezeReturnDate" />
+    <!--关联实体卡日志表需要的字段-->
+
+  </resultMap>
+  <select id="selectaccountId" resultType="com.resto.msgc.backend.card.dto.CardRechargeLogDto">
+      select
+		 a.account_id accountId,
+		 l.created_at createTime,
+         l.remain remain,
+         l.trade_no tradeNo,
+		 l.type type,
+		 l.login_telephone loginTelephone,
+		 o.charge_money chargeMoney,
+         o.reward_money rewardMoney
+      from
+         tb_account_log a,tb_card_customer c,tb_card_recharge_log l,tb_card_rechange o
+      where a.account_id=c.account_id
+      and c.id=l.card_customer_id
+      and o.id=l.charge_order_id
+      and a.account_id=#{accountId}
+-- 	  and a.source=10
+      and a.payment_type=1
+      GROUP BY l.trade_no
+  </select>
+  <select id="selectCardId" resultType="com.resto.msgc.backend.card.dto.PurchaseHistoryDto">
+    SELECT
+    DISTINCT
+	    o.create_time createTime,
+        o.serial_number serialNumber,
+        o.original_amount originalAmount,
+        (select SUM(pay_value) from tb_order_payment_item where order_id = o.id and payment_mode_id NOT IN (13,14,15,20,21)) payValue,
+	    (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 22 and order_id = o.id ) discountPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 6 and order_id = o.id ) accountPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 7 and order_id = o.id ) rechargeGiftPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 1 and order_id = o.id ) wechatPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 10 and order_id = o.id ) aliPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 3 and order_id = o.id ) couponPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 2 and order_id = o.id ) redEnvelopePayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 8 and order_id = o.id ) waitRedEnvelopePayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 5 and order_id = o.id ) swingCardPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 12 and order_id = o.id ) cashPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 16 and order_id = o.id ) shanHuiPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 17 and order_id = o.id ) memberPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 11 and order_id = o.id ) returnOrderPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 4 and order_id = o.id ) otherPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 23 and order_id = o.id ) cardAccountPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 24 and order_id = o.id ) cardRechargeGiftPayValue,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 19 and order_id = o.id ) cashRefund,
+        (select SUM(pay_value) from tb_order_payment_item  where payment_mode_id = 25 and order_id = o.id ) cardRefund,
+         o.order_pos_discount_money orderPosDiscountMoney,
+         o.member_discount_money memberDiscountMoney,
+         o.erase_money eraseMoney
+    FROM
+        tb_card_recharge_log l,tb_order_payment_item i,tb_order o, tb_order_payment_item top
+    WHERE l.charge_order_id=i.result_data
+    AND i.order_id=o.id
+    AND top.order_id= o.id
+    AND l.card_customer_id=#{cardCustomerId}
+    AND o.order_state IN (2,10,11)
+    AND o.production_status IN (2,3)
+    AND top.payment_mode_id NOT IN (13,14,15,20,21)
+    GROUP BY top.id
+    ORDER BY o.create_time DESC
+  </select>
+
+
+
+</mapper>
